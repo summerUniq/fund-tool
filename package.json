@@ -1,0 +1,127 @@
+{
+  "name": "fund-watch",
+  "description": "实时查看基金行情",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack --config ./build/node-extension.webpack.config.js",
+    "watch": "webpack --watch --config ./build/node-extension.webpack.config.js",
+    "package": "webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
+    "test-compile": "tsc -p ./",
+    "test-watch": "tsc -watch -p ./",
+    "pretest": "npm run test-compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.52.0",
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^12.11.7",
+    "eslint": "^7.15.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "glob": "^7.1.6",
+    "mocha": "^8.1.3",
+    "typescript": "^4.1.2",
+    "vscode-test": "^1.4.1",
+    "ts-loader": "^8.0.11",
+    "webpack": "^5.10.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "activationEvents": [
+    "onView:fund-list"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "fund.add",
+        "title": "新增",
+        "icon": {
+          "light": "images/add-light.svg",
+          "dark": "images/add-dark.svg"
+        }
+      },
+      {
+        "command": "fund.refresh",
+        "title": "刷新",
+        "icon": {
+          "light": "images/refresh-light.svg",
+          "dark": "images/refresh-dark.svg"
+        }
+      },
+      {
+        "command": "fund.item.remove",
+        "title": "删除",
+        "icon": {
+          "dark": "images/delete-dark.svg",
+          "light": "images/delete-light.svg"
+        }
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "when": "view == fund-list",
+          "command": "fund.refresh",
+          "group": "navigation"
+        },
+        {
+          "when": "view == fund-list",
+          "command": "fund.add",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "fund.item.remove",
+          "when": "view == fund-list",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "fund-watch",
+          "title": "FUND WATCH",
+          "icon": "images/fund.svg"
+        }
+      ]
+    },
+    "views": {
+      "fund-watch": [
+        {
+          "name": "自选基金",
+          "id": "fund-list"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "fund",
+      "properties": {
+        "fund.favorites": {
+          "type": "array",
+          "default": [
+            "161005",
+            "169101"
+          ],
+          "description": "自选基金列表，值为基金代码"
+        },
+        "fund.interval": {
+          "type": "number",
+          "default": 2,
+          "description": "刷新时间，单位为秒，默认2秒"
+        }
+      }
+    }
+  }
+}
